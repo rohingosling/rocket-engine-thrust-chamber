@@ -1,0 +1,300 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EngineContour</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-09-12"><meta name="DC.source" content="EngineContour.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Generate the axial contour model for the smooth bore rocket engine</span>
+<span class="comment">% combustion chamber.</span>
+
+<span class="keyword">function</span> engineContour ( s1, s2, s3, s4, s5, RC, RT, RE )
+</pre><pre class="codeinput">    <span class="comment">% Initialize function.</span>
+
+    clc;
+    clf;
+
+    <span class="comment">% Sectional partitians.</span>
+
+    s0 = double ( 0.0  );       <span class="comment">% Origin ( Injector face ).</span>
+<span class="comment">%     s1 = double ( 1.0  );       % Injector.</span>
+<span class="comment">%     s2 = double ( 6.0  );       % Combustion chamber.</span>
+<span class="comment">%     s3 = double ( 10.0 );       % Neck.</span>
+<span class="comment">%     s4 = double ( 12.0 );       % Throat.</span>
+<span class="comment">%     s5 = double ( 14.0 );       % Nozel Adaptor.</span>
+
+    <span class="comment">% Radii</span>
+
+    r0 = RC;        <span class="comment">% Combustion chamber radius.</span>
+    r1 = s1;        <span class="comment">% Injector fillet radius.</span>
+    r2 = r0 - r1;   <span class="comment">% Injector injection face.</span>
+    r3 = RT;        <span class="comment">% Throat radius.</span>
+    r4 = RE;        <span class="comment">% Nozel adaptor exhorst radius.</span>
+
+    <span class="comment">% Derive contour function coeficients.</span>
+
+    y0 = r3;
+    x0 = s3;
+    x1 = s4;
+    <span class="comment">% y1, is the junction between the throat and the nozel adaptor, and is derived below.</span>
+    x2 = s5;
+    y2 = r4;
+
+    a0 =                                       -(y0 - y2) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    b0 =                                 (2*x0*(y0 - y2)) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    c0 = -(- y2*x0^2 + 2*x2*y0*x0 + y0*x1^2 - 2*x2*y0*x1) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    a1 =                                    (2*(y0 - y2)) / (x0 + x1 - 2*x2);
+    b1 =                        (x0*y2 - 2*x2*y0 + x1*y2) / (x0 + x1 - 2*x2);
+    y1 =              (2*x1*y0 + x0*y2 - 2*x2*y0 - x1*y2) / (x0 + x1 - 2*x2);
+
+    <span class="comment">% Model geometric parameters.</span>
+
+    t = double ( 0.01 );
+
+    x0 = s0 : t : s1;
+    x1 = s1 : t : s2;           <span class="comment">% Not used if we draw a horizontal line in stead of evaluating the function y = r0.</span>
+    x2 = s2 : t : s3;
+    x3 = s3 : t : s4;
+    x4 = s4 : t : s5;
+
+    <span class="comment">% Sectional contour functions.</span>
+
+    injector          = r2 + sqrt (r1.^2 - (x0 - r1).^2 );
+    combustionChamber = r0;     <span class="comment">% Not used if we draw a horizontal line in stead of evaluating the function y = r0.</span>
+    neck              = r3+(r0-r3)*(1 + cos ( (x2-s2)*pi/(s3-s2) ) ) / 2;
+    Throat            = a0*x3.^2 + b0*x3 + c0;
+    nozzleAdaptor     = a1*x4 + b1;
+</pre><p><img src="EngineContour_eq05913.png" alt="$$e^{\pi i} + 1 = 0$$"></p><pre class="codeinput">    <span class="comment">% Plot model.</span>
+
+    hold <span class="string">all</span>;
+    lineWidth = 2;
+    margin    = 2;
+
+    plot ( [ s0-margin, s5+margin ], [ 0 ,0 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span> );
+
+    plot ( [ 0, 0 ], [ 0,  r2 ],     <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ 0, 0 ], [ 0, -r2 ],     <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+
+    plot ( x0,  injector,            <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( x0, -injector,            <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s1, s1 ], [ -r0 , r0 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+    plot ( [ s0, s1 ], [  r2,  r2 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+    plot ( [ s0, s1 ], [ -r2, -r2 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+    circle ( r1,  r2, r1, <span class="string">':'</span> );
+    circle ( r1, -r2, r1, <span class="string">':'</span> );
+
+    plot ( [ s1, s2 ], [  r0 , r0 ], <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s1, s2 ], [ -r0, -r0 ], <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s2, s2 ], [ -r0 , r0 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+
+    plot ( x2,  neck,                <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( x2, -neck,                <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s3, s3 ], [ -r3 , r3 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+
+    plot ( x3,  Throat,              <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( x3, -Throat,              <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s4, s4 ], [ -y1 , y1 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+
+    plot ( x4,  nozzleAdaptor,       <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( x4, -nozzleAdaptor,       <span class="string">'LineWidth'</span>, lineWidth, <span class="string">'Color'</span>, <span class="string">'k'</span> );
+    plot ( [ s5, s5 ], [ -y2 , y2 ], <span class="string">'LineWidth'</span>, 1, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span> );
+
+    <span class="comment">% Specify graphing parameters.</span>
+
+    axis ( [ s0-1, s3+1, -r0-1, r0+1 ] );
+    axis <span class="string">equal</span>;
+    set  ( gca, <span class="string">'XTick'</span>,  s0-1 : 1 : s5+1 );
+    set  ( gca, <span class="string">'YTick'</span>, -r0-1 : 1 : r0+1 );
+
+    <span class="comment">% Specify grid parameters.</span>
+
+    set ( gca, <span class="string">'GridLineStyle'</span>, <span class="string">'-'</span> );
+    set ( gca, <span class="string">'XLim'</span>, [ s0-margin s5+margin ], <span class="string">'YLim'</span>, [ -r0-margin r0+margin ] );
+    set ( gca, <span class="string">'xcolor'</span>, [.8 .8 .8], <span class="string">'ycolor'</span>, [.8 .8 .8] );
+    grid <span class="string">on</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">Cannot find an exact (case-sensitive) match for 'EngineContour'
+
+The closest match is: engineContour in C:\Users\Rohin Gosling\Documents\MATLAB\Test\Vector Graphics\engineContour.m
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Generate the axial contour model for the smooth bore rocket engine
+% combustion chamber.
+
+function engineContour ( s1, s2, s3, s4, s5, RC, RT, RE )
+    
+    % Initialize function.
+
+    clc;
+    clf;
+    
+    % Sectional partitians.
+    
+    s0 = double ( 0.0  );       % Origin ( Injector face ).
+%     s1 = double ( 1.0  );       % Injector.
+%     s2 = double ( 6.0  );       % Combustion chamber.
+%     s3 = double ( 10.0 );       % Neck.
+%     s4 = double ( 12.0 );       % Throat.
+%     s5 = double ( 14.0 );       % Nozel Adaptor.
+    
+    % Radii
+    
+    r0 = RC;        % Combustion chamber radius.
+    r1 = s1;        % Injector fillet radius.
+    r2 = r0 - r1;   % Injector injection face.
+    r3 = RT;        % Throat radius.
+    r4 = RE;        % Nozel adaptor exhorst radius.
+       
+    % Derive contour function coeficients.
+    
+    y0 = r3;
+    x0 = s3;    
+    x1 = s4;
+    % y1, is the junction between the throat and the nozel adaptor, and is derived below.    
+    x2 = s5;
+    y2 = r4;
+    
+    a0 =                                       -(y0 - y2) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    b0 =                                 (2*x0*(y0 - y2)) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    c0 = -(- y2*x0^2 + 2*x2*y0*x0 + y0*x1^2 - 2*x2*y0*x1) / ((x0 - x1)*(x0 + x1 - 2*x2));
+    a1 =                                    (2*(y0 - y2)) / (x0 + x1 - 2*x2);
+    b1 =                        (x0*y2 - 2*x2*y0 + x1*y2) / (x0 + x1 - 2*x2);
+    y1 =              (2*x1*y0 + x0*y2 - 2*x2*y0 - x1*y2) / (x0 + x1 - 2*x2);
+    
+    % Model geometric parameters.
+    
+    t = double ( 0.01 );
+    
+    x0 = s0 : t : s1;
+    x1 = s1 : t : s2;           % Not used if we draw a horizontal line in stead of evaluating the function y = r0.
+    x2 = s2 : t : s3;
+    x3 = s3 : t : s4;
+    x4 = s4 : t : s5;
+        
+    % Sectional contour functions.
+    
+    injector          = r2 + sqrt (r1.^2 - (x0 - r1).^2 );    
+    combustionChamber = r0;     % Not used if we draw a horizontal line in stead of evaluating the function y = r0.    
+    neck              = r3+(r0-r3)*(1 + cos ( (x2-s2)*pi/(s3-s2) ) ) / 2;    
+    Throat            = a0*x3.^2 + b0*x3 + c0;
+    nozzleAdaptor     = a1*x4 + b1;  
+    %%
+    % 
+    % $$e^{\pi i} + 1 = 0$$
+    % 
+    
+    % Plot model.    
+    
+    hold all;
+    lineWidth = 2;
+    margin    = 2;
+    
+    plot ( [ s0-margin, s5+margin ], [ 0 ,0 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', 'REPLACE_WITH_DASH_DASH' );
+    
+    plot ( [ 0, 0 ], [ 0,  r2 ],     'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ 0, 0 ], [ 0, -r2 ],     'LineWidth', lineWidth, 'Color', 'k' );
+        
+    plot ( x0,  injector,            'LineWidth', lineWidth, 'Color', 'k' ); 
+    plot ( x0, -injector,            'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ s1, s1 ], [ -r0 , r0 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    plot ( [ s0, s1 ], [  r2,  r2 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    plot ( [ s0, s1 ], [ -r2, -r2 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    circle ( r1,  r2, r1, ':' );
+    circle ( r1, -r2, r1, ':' );
+    
+    plot ( [ s1, s2 ], [  r0 , r0 ], 'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ s1, s2 ], [ -r0, -r0 ], 'LineWidth', lineWidth, 'Color', 'k' );    
+    plot ( [ s2, s2 ], [ -r0 , r0 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    
+    plot ( x2,  neck,                'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( x2, -neck,                'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ s3, s3 ], [ -r3 , r3 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    
+    plot ( x3,  Throat,              'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( x3, -Throat,              'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ s4, s4 ], [ -y1 , y1 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+    
+    plot ( x4,  nozzleAdaptor,       'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( x4, -nozzleAdaptor,       'LineWidth', lineWidth, 'Color', 'k' );
+    plot ( [ s5, s5 ], [ -y2 , y2 ], 'LineWidth', 1, 'Color', 'k', 'LineStyle', ':' );
+
+    % Specify graphing parameters.
+
+    axis ( [ s0-1, s3+1, -r0-1, r0+1 ] );
+    axis equal;
+    set  ( gca, 'XTick',  s0-1 : 1 : s5+1 );
+    set  ( gca, 'YTick', -r0-1 : 1 : r0+1 );
+    
+    % Specify grid parameters.
+    
+    set ( gca, 'GridLineStyle', '-' );
+    set ( gca, 'XLim', [ s0-margin s5+margin ], 'YLim', [ -r0-margin r0+margin ] );
+    set ( gca, 'xcolor', [.8 .8 .8], 'ycolor', [.8 .8 .8] );    
+    grid on;
+    
+end
+
+
+##### SOURCE END #####
+--></body></html>
